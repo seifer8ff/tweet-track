@@ -1,5 +1,6 @@
 # Untracked files
 config.js
+*.psd
 
 # UNTRACKED DIRECTORIES
 node_modules/

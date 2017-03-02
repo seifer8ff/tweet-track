@@ -1,0 +1,17 @@
+{
+  "name": "twitter-stream",
+  "version": "1.0.0",
+  "description": "Stream of Tweets from Twitter.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brady Mauermann-Peterson",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.6",
+    "express": "^4.14.1",
+    "socket.io": "^1.7.3",
+    "twitter": "^1.7.0"
+  }
+}

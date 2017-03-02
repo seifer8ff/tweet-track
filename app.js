@@ -32,7 +32,7 @@ io.on('connect', function(socket) {
 });
 
 app.get("/", function(req, res){
-    res.render("homepage");
+	res.render("homepage");
 });
 
 // socket.io server rather than expresss

@@ -4,5 +4,6 @@ socket.on('connection', function() {
 	console.log('Connected!');
 });
 socket.on('tweets', function(tweet) {
-	$("#tweet-container").prepend("<h3>" + tweet + "</h3>");
+	// creates a new h4 for each incoming tweet
+	$(".stream__tweets").prepend("<h4>" + tweet + "</h4>");
 });

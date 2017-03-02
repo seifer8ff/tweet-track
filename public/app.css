@@ -1,4 +1,49 @@
+html	{
+	height: 100%;
+}
+
 body	{
-	background-color: blue;
+	height: 100%;
+	background-color: #cceaf3;
+}
+
+h1	{
+	padding-bottom: 40px;
+}
+
+.title	{
+	text-align: center;
+}
+
+.title--highlight	{
+	background-color: #3cf;
 	color: white;
+	line-height: 100%;
+	margin: 0;
+	padding: 20px;
+}
+
+.container--page	{
+	/*background-color: #cceaf3;*/
+}
+
+.stream 	{
+	background-color: white;
+	/*border: 20px solid #c0deed;*/
+	border-radius: 4px 4px 4px 4px;
+	max-height: 1100px;
+	overflow: hidden;
+}
+
+.stream__tweets	{
+	color: grey;
+	padding-left: 10px;
+}
+
+#visCanvas	{
+	position: absolute;
+	top: 60%;
+	width: 100%;
+	height: 800px;
+	background: none;
 }

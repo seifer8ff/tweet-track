@@ -1,2 +1,5 @@
 # Untracked files
 config.js
+
+# UNTRACKED DIRECTORIES
+node_modules/

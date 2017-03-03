@@ -61,13 +61,36 @@ function onResize() {
 	path = createPath(0.1);
 }
 
-function onMouseMove(event) {
-	var location = path.getNearestLocation(event.point);
+// function onMouseMove(event) {
+// 	var location = path.getNearestLocation(event.point);
+// 	var segment = location.segment;
+// 	var point = segment.point;
+
+// 	if (!point.fixed && location.distance < size.height / 4) {
+// 		var y = event.point.y;
+// 		point.y += (y - point.y) / 6;
+// 		if (segment.previous && !segment.previous.fixed) {
+// 			var previous = segment.previous.point;
+// 			previous.y += (y - previous.y) / 24;
+// 		}
+// 		if (segment.next && !segment.next.fixed) {
+// 			var next = segment.next.point;
+// 			next.y += (y - next.y) / 24;
+// 		}
+// 	}
+// }
+
+setInterval(function(){
+	var posX = Math.round(Math.random() * 1920);
+    var posY = Math.round(Math.random() * 1080);
+    var randPoint = new Point(posX, posY);
+    console.log(randPoint);
+	var location = path.getNearestLocation(randPoint);
 	var segment = location.segment;
 	var point = segment.point;
 
-	if (!point.fixed && location.distance < size.height / 4) {
-		var y = event.point.y;
+	if (!point.fixed && location.distance < size.height/2) {
+		var y = randPoint.y;
 		point.y += (y - point.y) / 6;
 		if (segment.previous && !segment.previous.fixed) {
 			var previous = segment.previous.point;
@@ -78,7 +101,7 @@ function onMouseMove(event) {
 			next.y += (y - next.y) / 24;
 		}
 	}
-}
+}, 3000);
 
 function onFrame(event) {
 	updateWave(path);
@@ -99,9 +122,9 @@ function updateWave(path) {
 	path.smooth({ type: 'continuous' });
 }
 
-function onKeyDown(event) {
-	if (event.key == 'space') {
-		path.fullySelected = !path.fullySelected;
-		path.fillColor = path.fullySelected ? null : new Color(.2, .8, 1, 0.8);
-	}
-}
+// function onKeyDown(event) {
+// 	if (event.key == 'space') {
+// 		path.fullySelected = !path.fullySelected;
+// 		path.fillColor = path.fullySelected ? null : new Color(.2, .8, 1, 0.8);
+// 	}
+// }

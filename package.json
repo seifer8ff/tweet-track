@@ -11,7 +11,6 @@
   "dependencies": {
     "ejs": "^2.5.6",
     "express": "^4.14.1",
-    "paper": "^0.10.2",
     "socket.io": "^1.7.3",
     "twitter": "^1.7.0"
   }

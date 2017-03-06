@@ -2,7 +2,7 @@ var socket = io();
 var tweetCountTotal = 0;
 var tweetCountCurrent = 0;
 var graph = document.getElementById("graph");
-var graphUpdateTime = 2000;
+var graphUpdateTime = 1000;
 var d = new Date();
 var time = d.toTimeString();
 var xPoints = [time];
@@ -19,21 +19,26 @@ var tweetTrace = {
 	x: [time],
 	y: [tweetCountCurrent],
 	fill: "tonexty",
+	fillcolor: 'rgba(51,204,255,0.4)',
+	line: {
+		color: 'rgb(0,132,180)'
+	},
 	type: "scatter"
 }
 var data = [tweetTrace];
 var layout = {
-    title: "Static Tweet Chart",
-    paper_bgcolor: 'rgba(0,0,0,0)',
-  	plot_bgcolor: 'rgba(0,0,0,0)',
+    title: "Tweets Per Second",
+    paper_bgcolor: 'rgba(255,255,255,1',
+  	plot_bgcolor: 'rgba(255,255,255,1)',
   	showlegend: false,
 	margin: {
 		l: 30,
 		r: 30,
-		b: 70,
-		t: 50,
-		pad: 0
+		b: 50,
+		t: 30,
+		pad: 4
 	},
+	height: 360,
   	xaxis: 	{
   		fixedrange: true,
   		range: [minRangeX, maxRangeX]
@@ -149,6 +154,6 @@ function refreshGraphAxis() {
 		maxRangeX = xPoints.length + 5;
 	}
 	// update y axis range to 5 points higher than the max tweetcount
-	maxRangeY = Math.max(...yPoints) + 5;
+	maxRangeY = Math.max(...yPoints) + 3;
 }
 

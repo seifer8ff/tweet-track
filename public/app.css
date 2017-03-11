@@ -11,13 +11,10 @@ h1	{
 	padding-bottom: 40px;
 }
 
-label	{
-	font-size: 1.6em;
-}
-
 .col--noPad	{
 	padding-left: 0;
 	padding-right: 0;
+	margin-bottom: 15px;
 }
 
 .title	{
@@ -36,7 +33,7 @@ label	{
 .section {
 	background-color: white;
 	color: black;
-	margin: 20px 0 20px 0;
+	margin: 15px 0 15px 0;
 	padding: 10px;
 	border-radius: 12px 12px 12px 12px;
 	box-shadow: 0 2px 2px 0 #C2C2C2;

@@ -2,20 +2,13 @@
 
 
 
-<div class="container-fluid">
-	<!-- TITLE -->
-	<div class="row">
-		<div class="col-xs-12 col--noPad">
-			<h1 class="title title--highlight">Twitter Stream Visualizer</h1>
-		</div>
-	</div>
-</div>
+
 <div class="container">
 	<!-- INFO BOXES -->
 	<div class="row">
 		<div class="col-xs-6">
 			<div class="section section__rect">
-				<form class="form-inline" action="/" method="POST">
+				<form class="form-inline" action="/stream" method="POST">
 					<div class="form-group">
 						<label for"newKeyword" >Keyword: </label>
 						<input  type="text" class="form-control" id="newKeyword" name="newKeyword" placeholder="keyword">
@@ -59,9 +52,11 @@
 	</div>
 </div>
 
-
-
-
-
-
-<% include partials/footer %>
+<script
+	src="https://code.jquery.com/jquery-3.1.1.js"
+	integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+	crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js/plotly-latest.min.js" ></script>
+<script type="text/javascript" src="/js/main.js"></script>

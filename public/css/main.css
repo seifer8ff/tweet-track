@@ -5,17 +5,34 @@ html	{
 body	{
 	height: 100%;
 	background-color: #cceaf3;
+	padding-top: 60px;
 }
 
-h1	{
-	padding-bottom: 40px;
+.navbar-inverse {
+	background-color: #3cf;
+	color: white;
+	border: none;
+	box-shadow: 0 2px 2px 0 #C2C2C2;
+	font-size: 1.2em;
 }
 
-.col--noPad	{
+.navbar-inverse .navbar-brand {
+	color: white;
+}
+
+.navbar-brand {
+	font-size: 1.35em;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #eff4f7;
+}
+
+/*.col--noPad	{
 	padding-left: 0;
 	padding-right: 0;
 	margin-bottom: 15px;
-}
+}*/
 
 .title	{
 	text-align: center;

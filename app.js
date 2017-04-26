@@ -1,38 +1,53 @@
-var config = require("./config");
-var express = require("express");
-var app = express();
-var server = require("http").createServer(app);
-var io = require("socket.io")(server);
-var twitter = require('twitter');
+var configAuth 		= require("./config/auth"),
+	express 		= require("express"),
+	app 			= express(),
+	server 			= require("http").createServer(app),
+	io 				= require("socket.io")(server),
+	session			= require("express-session"),
+	passport		= require("passport"),
+	bodyParser 		= require("body-parser"),
+	methodOverride	= require("method-override"),
+	mongoose 		= require("mongoose");
 
+// ROUTES
+var indexRoutes         = require("./routes/index")(io);
+
+// initialize and configure passport
+require("./config/passport")(passport);
+
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://localhost/twitter-stream");
+
+// use bodyparser
+app.use(bodyParser.urlencoded({extended: true}));
 // serve files in the public directory
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
+// method override for PUT and DELETE routes
+app.use(methodOverride("_method"));
 // default to ejs templating
 app.set("view engine", "ejs");
-
-var twit = new twitter({
-	// api keys are defined in a config file- excluded from github for privacy
-    consumer_key: config.twitter.consumerKey,
-    consumer_secret: config.twitter.consumerSecret,
-    access_token_key: config.twitter.accessTokenKey,
-    access_token_secret: config.twitter.accessTokenSecret
+app.use(session({
+    secret: "Lets see what people choose to track",
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+// add user data to all pages
+app.use(function(req, res, next) {
+	res.locals.currentUser 	= req.user;
+	res.locals.queryString 	= "javascript,";
+	res.locals.streams		= [];
+    next();
 });
+// setup routes
+app.use("/", indexRoutes);
 
-// stream tweets by keyword
-var tweetStream = twit.stream('statuses/filter', { track: 'gay' });
 
-// make streaming tweets available to front end via websockets
+
+// runs on each client's connection
 io.on('connect', function(socket) {
-	tweetStream.on('data', function(tweet) {
-		socket.emit('tweets', tweet.text);
-	});
-	tweetStream.on('error', function(error) {
-		throw error;
-	});
-});
-
-app.get("/", function(req, res){
-	res.render("homepage");
+	console.log("connected to socket.io");
 });
 
 // socket.io server rather than expresss

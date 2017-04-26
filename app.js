@@ -1,4 +1,4 @@
-var config 			= require("./config"),
+var config 			= require("./config/config"),
 	express 		= require("express"),
 	app 			= express(),
 	server 			= require("http").createServer(app),
@@ -8,10 +8,12 @@ var config 			= require("./config"),
 	TwitterStrat	= require("passport-twitter").Strategy,
 	twitter 		= require('twitter'),
 	bodyParser 		= require("body-parser"),
+	methodOverride	= require("method-override"),
 	mongoose 		= require("mongoose"),
 	Tweet 			= require("./models/tweet"),
 	User 			= require("./models/user"),
-	queryString 	= "gay,Clinton";
+	queryString 	= "gay,Clinton",
+	streams 		= [];
 
 
 mongoose.Promise = global.Promise;
@@ -64,6 +66,8 @@ passport.use("twitter", new TwitterStrat({
 app.use(bodyParser.urlencoded({extended: true}));
 // serve files in the public directory
 app.use(express.static(__dirname + "/public"));
+// method override for PUT and DELETE routes
+app.use(methodOverride("_method"));
 // default to ejs templating
 app.set("view engine", "ejs");
 app.use(session({
@@ -89,7 +93,7 @@ app.use(passport.session());
 
 // add user data to all pages
 app.use(function(req, res, next) {
-    res.locals.currentUser = req.user;
+	res.locals.currentUser = req.user;
     next();
 });
 
@@ -109,12 +113,20 @@ buildQueryString(function(result) {
 
 	// stream tweets from twitter to the database
 	tweetStream.on('data', function(tweet) {
+		// check that tweet has required fields for saving to db
 		if (tweet && tweet.user && tweet.text && tweet.created_at) {
-			Tweet.create({
+			var newTweet = {
 				name: tweet.user["screen_name"],
 				body: tweet.text,
-				time: tweet.created_at
-			}, function(err, newTweet) {
+				time: tweet.created_at,
+				hashtags: []
+			}
+			// if tweet has hashtags, save those as well
+			if (tweet.entities && tweet.entities.hashtags.length > 0) {
+				newTweet.hashtags = tweet.entities.hashtags.map(function(hashtag) { return hashtag["text"]});
+			}
+			// add tweet to database
+			Tweet.create(newTweet, function(err, newTweet) {
 				if (err) {
 					console.log(err);
 				}
@@ -129,7 +141,6 @@ buildQueryString(function(result) {
 
 
 
-
 // INDEX ROUTE
 app.get("/", function(req, res){
 	res.render("login");
@@ -137,7 +148,17 @@ app.get("/", function(req, res){
 
 // ROUTE TO RENDER TWEET STREAM
 app.get("/stream", isLoggedIn, function(req, res) {
-	res.render("stream");
+	User.findById(req.user._id, function(err, user) {
+		if (err) {
+			res.redirect("/");
+		} else {
+			// build streams each time the page is loaded
+			buildStreams(user, function() {
+				console.log(streams.length);
+			});
+			res.render("stream", {updatedUser: user});
+		}
+	});
 });
 
 // ROUTE TO ADD KEYWORD
@@ -154,6 +175,17 @@ app.post("/stream", isLoggedIn, function(req, res) {
 				user.save();
 				console.log(user);
 			}
+			res.redirect("/stream");
+		}
+	});
+});
+
+// ROUTE TO DELETE KEYWORD
+app.delete("/stream/:keyword", isLoggedIn, function(req, res) {
+	User.findOneAndUpdate({_id: req.user._id}, {$pull: {keywords: req.params.keyword}}, function(err, user) {
+		if (err) {
+			console.log(err);
+		} else {
 			res.redirect("/stream");
 		}
 	});
@@ -179,17 +211,6 @@ app.get("/logout", isLoggedIn, function(req, res) {
 io.on('connect', function(socket) {
 	console.log("connected to socket.io");
 });
-
-// stream tweets from the database to the front end. Checks for new db entries every second
-var dbStream = Tweet.find().tailable(true, {awaitdata: true, numberOfRetries: 500, tailableRetryInterval : 1000}).stream();
-dbStream.on("data", function(dbTweet) {
-	io.emit('tweets', dbTweet.body);
-});
-
-dbStream.on("error", function(err) {
-	throw error;
-})
-
 
 
 
@@ -233,5 +254,44 @@ function buildQueryString(callback) {
 		if (callback && typeof(callback) === "function") {
 			callback(newQueryString);
 		}
+	});
+}
+
+function buildStreams(user, callback) {
+	for (var i = 0; i < streams.length; i++) {
+		streams[i].destroy();
+	}
+	streams.length = 0;
+
+	User.findById(user._id, function(err, foundUser) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log(foundUser.keywords);
+			foundUser.keywords.forEach(function(keyword, index) {
+				// add stream of particular keyword to array of streams
+				streams[index] = Tweet.find({ $or: [{hashtags: new RegExp(keyword, "i")}, {body: new RegExp(keyword, "i")}] }).tailable(true, {awaitdata: true, numberOfRetries: 500, tailableRetryInterval : 1000}).stream();
+
+				console.log("built stream " + index);
+
+				startStream(streams[index], index);
+
+				if (callback && typeof(callback) === "function") {
+					callback();
+				}
+			});
+		}
+	});
+}
+
+function startStream(stream, index, callback) {
+	// begin streaming
+	stream.on("data", function(dbTweet) {
+		io.emit("tweets" + index, dbTweet.body);
+	});
+	console.log("streaming: tweets" + index);
+
+	stream.on("error", function(err) {
+		throw error;
 	});
 }

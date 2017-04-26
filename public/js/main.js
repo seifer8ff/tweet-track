@@ -1,54 +1,73 @@
 var socket = io();
-var tweetCountTotal = 0;
-var tweetCountCurrent = 0;
-var graph = document.getElementById("graph");
+// var tweetCount = 0;
+// var graph = document.getElementById("graph");
+var graphs = document.getElementsByClassName("graph");
+var streamContainers = document.getElementsByClassName("stream__container");
 var graphUpdateTime = 1000;
 var d = new Date();
 var time = d.toTimeString();
-var xPoints = [time];
-var yPoints = [0];
-var minRangeX = 0;
-var maxRangeX = 10;
-var minRangeY = 0;
-var maxRangeY = 10;
+// var xPoints = [time];
+// var yPoints = [0];
+// var minRangeX = 0;
+// var maxRangeX = 10;
+// var minRangeY = 0;
+// var maxRangeY = 10;
 var graphUpdater;
 var paused = true;
+var streamSections = [];
 
-
-var tweetTrace = {
-	x: [time],
-	y: [tweetCountCurrent],
-	fill: "tonexty",
-	fillcolor: 'rgba(51,204,255,0.4)',
-	line: {
-		color: 'rgb(0,132,180)'
-	},
-	type: "scatter"
+for (var i = 0; i < graphs.length; i++) {
+	streamSections.push({
+		graphData: {
+			graph: graphs[i],
+			xPoints: [time],
+			yPoints: [0],
+			minRangeX: 0,
+			maxRangeX: 10,
+			minRangeY: 0,
+			maxRangeY: 10,
+			tweetTrace: {
+				x: [time],
+				// y is equal to tweet count, which to start is 0
+				y: [0],
+				fill: "tonexty",
+				fillcolor: 'rgba(51,204,255,0.4)',
+				line: {
+					color: 'rgb(0,132,180)'
+				},
+				type: "scatter"
+			},
+			layout: {
+				title: "Tweets Per Second",
+			    paper_bgcolor: 'rgba(255,255,255,1',
+			  	plot_bgcolor: 'rgba(255,255,255,1)',
+			  	showlegend: false,
+				margin: {
+					l: 30,
+					r: 30,
+					b: 50,
+					t: 30,
+					pad: 4
+				},
+				height: 360,
+			  	xaxis: 	{
+			  		fixedrange: true,
+			  		range: [0, 10]
+			  	},
+			  	yaxis: 	{
+			  		// ticks: 'inside',
+			  		fixedrange: true,
+			  		range: [0, 10]
+			  	}
+			}
+		},
+		streamName: "tweets" + i,
+		streamContainer: streamContainers[i],
+		xPoints: [time],
+		yPoints: [0],
+		tweetCount : 0
+	});
 }
-var data = [tweetTrace];
-var layout = {
-    title: "Tweets Per Second",
-    paper_bgcolor: 'rgba(255,255,255,1',
-  	plot_bgcolor: 'rgba(255,255,255,1)',
-  	showlegend: false,
-	margin: {
-		l: 30,
-		r: 30,
-		b: 50,
-		t: 30,
-		pad: 4
-	},
-	height: 360,
-  	xaxis: 	{
-  		fixedrange: true,
-  		range: [minRangeX, maxRangeX]
-  	},
-  	yaxis: 	{
-  		// ticks: 'inside',
-  		fixedrange: true,
-  		range: [minRangeY, maxRangeY]
-  	}
-};
 
 
 
@@ -60,37 +79,30 @@ init();
 
 function init() {
 	unpause();
-	// initial plot on page load
-	Plotly.newPlot(graph, data, layout, {displayModeBar: false});
+
+	for (var i = 0; i < streamSections.length; i++) {
+		Plotly.newPlot(streamSections[i].graphData.graph, [streamSections[i].graphData.tweetTrace], streamSections[i].graphData.layout, {displayModeBar: false});
+		
+		startStream(streamSections[i]);
+
+		// make graph responsive
+		window.onresize = function() {
+			Plotly.Plots.resize(streamSections[i].graphData.graph);
+		};
+	}
 
 	// pause and unpause tweet stream upon click
 	$(".gradient").on("click", function() {
-		if (paused)	{
-			unpause();
-		} else	{
-			pause();
-		}
-	});
-	
-	// Add incoming tweets to dom + count them
-	socket.on('tweets', function(tweet) {
-		if (paused) return;
+			if (paused)	{
+				unpause();
+			} else	{
+				pause();
+			}
+		});
 
-		tweetCountTotal += 1;
-		// gets reset each time the graph updates
-		tweetCountCurrent += 1;
-		// creates a new h4 for each incoming tweet
-		$(".stream__container").prepend("<p class='stream__tweet'>" + tweet + "</p>");
-	});
-	
 	// only update graph if tab is active
 	window.addEventListener('focus', unpause);    
 	window.addEventListener('blur', pause);
-
-	// make graph responsive
-	window.onresize = function() {
-		Plotly.Plots.resize(graph);
-	};
 }
 
 function unpause() {
@@ -110,50 +122,72 @@ function pause() {
 function updateGraph() {
 	// only update graph if websockets connected/not paused
 	if (!paused)	{
-		refreshGraphData();
-		refreshGraphAxis();
-		
-		// animate new points being added to graph
-		Plotly.animate(graph, {
-		    data: [{x: xPoints, y: yPoints}],
-		    traces: [0],
-		    layout: {
-		    	// update ranges with new mins and maxes
-		    	xaxis: 	{
-	  				range: [minRangeX, maxRangeX]
-	  			},
-		    	yaxis: 	{
-	  				range: [minRangeY, maxRangeY]
-	  			}
-		    }
-		  }, {
-		    transition: {
-		      duration: 500,
-		      easing: 'cubic-in-out'
-		    }
-		  })
-		// reset tweet count (we're measuring tweets per X seconds)
-		tweetCountCurrent = 0;
+		for (var i = 0; i < streamSections.length; i++) {
+			refreshGraphData(streamSections[i]);
+			refreshGraphAxis(streamSections[i]);
+			
+			// animate new points being added to graph
+			Plotly.animate(streamSections[i].graphData.graph, {
+			    data: [{x: streamSections[i].graphData.xPoints, y: streamSections[i].graphData.yPoints}],
+			    traces: [0],
+			    layout: {
+			    	// update ranges with new mins and maxes
+			    	xaxis: 	{
+		  				range: [streamSections[i].graphData.minRangeX, streamSections[i].graphData.maxRangeX]
+		  			},
+			    	yaxis: 	{
+		  				range: [streamSections[i].graphData.minRangeY, streamSections[i].graphData.maxRangeY]
+		  			}
+			    }
+			  }, {
+			    transition: {
+			      duration: 500,
+			      easing: 'cubic-in-out'
+			    }
+			  })
+			// reset tweet count (we're measuring tweets per X seconds)
+			streamSections[i].tweetCount = 0;
+		}
 	}
 }
 
-function refreshGraphData() {
+function refreshGraphData(streamSection) {
 	// grab current date, convert to string, and push to xPoint array
 	d = new Date();
 	time = d.toTimeString();
-	xPoints.push(time);
+	streamSection.graphData.xPoints.push(time);
 
 	// push current tweet count to yPoint array
-	yPoints.push(tweetCountCurrent);
+	streamSection.graphData.yPoints.push(streamSection.tweetCount);
 }
 
-function refreshGraphAxis() {
+function refreshGraphAxis(streamSection) {
 	// check if 5 points have been added. If so, update x axis range
-	if (xPoints.length%5 === 0) {
-		minRangeX = xPoints.length - 5;
-		maxRangeX = xPoints.length + 5;
+	if (streamSection.graphData.xPoints.length%5 === 0) {
+		streamSection.graphData.minRangeX = streamSection.graphData.xPoints.length - 5;
+		streamSection.graphData.maxRangeX = streamSection.graphData.xPoints.length + 5;
 	}
 	// update y axis range to 5 points higher than the max tweetcount
-	maxRangeY = Math.max(...yPoints) + 3;
+	streamSection.graphData.maxRangeY = Math.max(...streamSection.graphData.yPoints) + 3;
+}
+
+function startStream(streamSection) {
+	socket.on(streamSection.streamName, function(tweet) {
+		if (paused) return;
+
+		// gets reset each time the graph updates
+		streamSection.tweetCount += 1;
+		// creates a new h4 for each incoming tweet
+		// $(streamSection.streamContainer).prepend("<p class='stream__tweet'>" + tweet + "</p>");
+
+
+		streamSection.streamContainer.insertAdjacentHTML("beforeend", "<p class='stream__tweet'>" + tweet + "</p>");
+		var streamTweets = streamSection.streamContainer.getElementsByClassName("stream__tweet");
+	    if (streamTweets.length > 10) {
+	        streamSection.streamContainer.removeChild(streamTweets[0].nextSibling);
+	        streamSection.streamContainer.removeChild(streamTweets[0]);
+	    }
+
+	});
 }
 

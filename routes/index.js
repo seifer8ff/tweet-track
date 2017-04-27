@@ -5,7 +5,7 @@ var express     = require("express"),
 
 module.exports = function(io) {
 
-	var middleware 	= require("../middleware")(io);
+	var utils 	= require("../libs")(io);
 
 	// initialize and configure passport
 	require("../config/passport")(passport);
@@ -18,21 +18,20 @@ module.exports = function(io) {
 
 	// ROUTE TO RENDER TWEET STREAM
 	router.get("/stream", 
-		middleware.isLoggedIn, middleware.buildQueryString, middleware.buildTwitterStream, middleware.buildDBStreams, 
+		utils.middleware.isLoggedIn, utils.middleware.buildDBStreams, 
 		function(req, res) {
 			User.findById(req.user._id, function(err, user) {
 				if (err) {
 					res.redirect("/");
 				} else {
 					// pass in updated user to account for changes in user's keywords
-					console.log("first stream to be rendered= " + res.locals.streams[0]);
 					res.render("stream", {updatedUser: user});
 				}
 			});
 	});
 
 	// ROUTE TO ADD KEYWORD
-	router.post("/stream", middleware.isLoggedIn, function(req, res) {
+	router.post("/stream", utils.middleware.isLoggedIn, function(req, res) {
 		User.findById(req.user._id, function(err, user) {
 			if (err) {
 				res.redirect("/stream");
@@ -51,7 +50,7 @@ module.exports = function(io) {
 	});
 
 	// ROUTE TO DELETE KEYWORD
-	router.delete("/stream/:keyword", middleware.isLoggedIn, function(req, res) {
+	router.delete("/stream/:keyword", utils.middleware.isLoggedIn, function(req, res) {
 		User.findOneAndUpdate({_id: req.user._id}, {$pull: {keywords: req.params.keyword}}, function(err, user) {
 			if (err) {
 				console.log(err);
@@ -72,7 +71,7 @@ module.exports = function(io) {
 	}));
 
 	// ROUTE TO LOGOUT
-	router.get("/logout", middleware.isLoggedIn, function(req, res) {
+	router.get("/logout", utils.middleware.isLoggedIn, function(req, res) {
 	    req.logout();
 	    res.redirect("/");
 	});

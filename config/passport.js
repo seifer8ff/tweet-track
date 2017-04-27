@@ -69,5 +69,6 @@ module.exports = function() {
         });
       })
   );
-
+  return passport;
 }
+

@@ -7,7 +7,8 @@ var configAuth 		= require("./config/auth"),
 	passport		= require("passport"),
 	bodyParser 		= require("body-parser"),
 	methodOverride	= require("method-override"),
-	mongoose 		= require("mongoose");
+	mongoose 		= require("mongoose"),
+	utils			= require("./libs")(io);
 
 // ROUTES
 var indexRoutes         = require("./routes/index")(io);
@@ -36,8 +37,6 @@ app.use(passport.session());
 // add user data to all pages
 app.use(function(req, res, next) {
 	res.locals.currentUser 	= req.user;
-	res.locals.queryString 	= "javascript,";
-	res.locals.streams		= [];
     next();
 });
 // setup routes
@@ -53,4 +52,9 @@ io.on('connect', function(socket) {
 // socket.io server rather than expresss
 server.listen(3000, function(){
 	console.log("socker server is listening on port 3000");
+	utils.stream.buildQueryString(function() {
+		utils.stream.buildTwitterStream(function() {
+			console.log("twitter streaming now");
+		});
+	});
 });

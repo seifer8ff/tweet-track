@@ -1,19 +1,12 @@
 var socket = io();
-// var tweetCount = 0;
-// var graph = document.getElementById("graph");
 var graphs = document.getElementsByClassName("graph");
 var streamContainers = document.getElementsByClassName("stream__container");
 var graphUpdateTime = 1000;
 var d = new Date();
 var time = d.toTimeString();
-// var xPoints = [time];
-// var yPoints = [0];
-// var minRangeX = 0;
-// var maxRangeX = 10;
-// var minRangeY = 0;
-// var maxRangeY = 10;
 var graphUpdater;
 var paused = true;
+// html sections that contain both a stream and graph of tweets, as well as all of the required data
 var streamSections = [];
 
 for (var i = 0; i < graphs.length; i++) {
@@ -71,7 +64,7 @@ for (var i = 0; i < graphs.length; i++) {
 
 
 
-
+// runs on load
 init();
 
 
@@ -84,12 +77,35 @@ function init() {
 		Plotly.newPlot(streamSections[i].graphData.graph, [streamSections[i].graphData.tweetTrace], streamSections[i].graphData.layout, {displayModeBar: false});
 		
 		startStream(streamSections[i]);
-
-		// make graph responsive
-		window.onresize = function() {
-			Plotly.Plots.resize(streamSections[i].graphData.graph);
-		};
 	}
+	
+	if (streamSections[0]) {
+		window.addEventListener("resize", function() {
+			Plotly.Plots.resize(streamSections[0].graphData.graph);
+		});
+	}
+	if (streamSections[1]) {
+		window.addEventListener("resize", function() {
+			Plotly.Plots.resize(streamSections[1].graphData.graph);
+		});
+	}
+	if (streamSections[2]) {
+		window.addEventListener("resize", function() {
+			Plotly.Plots.resize(streamSections[2].graphData.graph);
+		});
+	}
+	if (streamSections[3]) {
+		window.addEventListener("resize", function() {
+			Plotly.Plots.resize(streamSections[3].graphData.graph);
+		});
+	}
+	if (streamSections[4]) {
+		window.addEventListener("resize", function() {
+			Plotly.Plots.resize(streamSections[4].graphData.graph);
+		});
+	}
+
+	
 
 	// pause and unpause tweet stream upon click
 	$(".gradient").on("click", function() {
@@ -104,6 +120,8 @@ function init() {
 	window.addEventListener('focus', unpause);    
 	window.addEventListener('blur', pause);
 }
+
+
 
 function unpause() {
 	console.log("unpaused");
@@ -120,7 +138,7 @@ function pause() {
 }
 
 function updateGraph() {
-	// only update graph if websockets connected/not paused
+	// only update graph if sockets connected/not paused
 	if (!paused)	{
 		for (var i = 0; i < streamSections.length; i++) {
 			refreshGraphData(streamSections[i]);
@@ -171,18 +189,20 @@ function refreshGraphAxis(streamSection) {
 	streamSection.graphData.maxRangeY = Math.max(...streamSection.graphData.yPoints) + 3;
 }
 
+// takes one streamSection (containing both the stream and graph data), and begins streaming tweets from the socket
 function startStream(streamSection) {
+	var streamTweets = streamSection.streamContainer.getElementsByClassName("stream__tweet");
+
 	socket.on(streamSection.streamName, function(tweet) {
 		if (paused) return;
 
 		// gets reset each time the graph updates
 		streamSection.tweetCount += 1;
-		// creates a new h4 for each incoming tweet
-		// $(streamSection.streamContainer).prepend("<p class='stream__tweet'>" + tweet + "</p>");
+		// tweetBuffer.push("<p class='stream__tweet'>" + tweet + "</p>");
 
 
 		streamSection.streamContainer.insertAdjacentHTML("beforeend", "<p class='stream__tweet'>" + tweet + "</p>");
-		var streamTweets = streamSection.streamContainer.getElementsByClassName("stream__tweet");
+		streamTweets = streamSection.streamContainer.getElementsByClassName("stream__tweet");
 	    if (streamTweets.length > 10) {
 	        streamSection.streamContainer.removeChild(streamTweets[0].nextSibling);
 	        streamSection.streamContainer.removeChild(streamTweets[0]);
@@ -190,4 +210,8 @@ function startStream(streamSection) {
 
 	});
 }
+
+
+
+
 

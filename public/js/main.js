@@ -70,39 +70,39 @@ function init() {
 				}]
 			},
 			elements: {
-	            line: {
+				line: {
 	                tension: 0, // disables bezier curves
 	            }
 	        },
 	        layout: {
-	            padding: {
-	                left: 0,
-	                right: 10,
-	                top: 0,
-	                bottom: 0
-	            }
-        }
-		}
+	        	padding: {
+	        		left: 0,
+	        		right: 10,
+	        		top: 0,
+	        		bottom: 0
+	        	}
+	        }
+	    }
 
-		var myLineChart = new Chart(graphs[i], {
-			type: 'line',
-			data: data,
-			options: options
-		});
+	    var myLineChart = new Chart(graphs[i], {
+	    	type: 'line',
+	    	data: data,
+	    	options: options
+	    });
 
-		var streamObj = {
-			streamName: "tweets" + i,
-			graph: myLineChart,
-			tweetCount : 0,
-			streamContainer: streamContainers[i]
-		}
+	    var streamObj = {
+	    	streamName: "tweets" + i,
+	    	graph: myLineChart,
+	    	tweetCount : 0,
+	    	streamContainer: streamContainers[i]
+	    }
 
-		streamSections.push(streamObj);
+	    streamSections.push(streamObj);
 
-	startStream(streamSections[i]);
-}
-
-
+	    startStream(streamSections[i]);
+	}
+	socket.connect();
+	graphUpdater = setInterval(updateGraph, graphUpdateTime);
 
 	// pause and unpause tweet stream upon click
 	$(".gradient").on("click", function() {
@@ -112,30 +112,22 @@ function init() {
 			pause();
 		}
 	});
-
-	// only update graph if tab is active
-	window.addEventListener('focus', unpause);    
-	window.addEventListener('blur', pause);
 }
 
 
 
 function unpause() {
 	console.log("unpaused");
-	socket.connect();
-    graphUpdater = setInterval(updateGraph, graphUpdateTime);
     paused = false;
 }
 
 function pause() {
 	console.log("paused");
-	socket.disconnect();
-	clearInterval(graphUpdater);
 	paused = true;
 }
 
 function updateGraph() {
-	// only update graph if sockets connected/not paused
+	// only update graph if not paused
 	if (!paused)	{
 		for (var i = 0; i < streamSections.length; i++) {
 			refreshGraphData(streamSections[i]);
@@ -170,15 +162,20 @@ function startStream(streamSection) {
 	socket.on(streamSection.streamName, function(tweet) {
 		if (paused) return;
 
+		// hide loader and unhide graph once tweets start streaming in
+		if (streamSection.graph.canvas.classList.contains("hidden")) {
+			streamSection.graph.canvas.parentNode.getElementsByClassName("loader")[0].classList.add("hidden");
+			streamSection.graph.canvas.classList.remove("hidden");
+		}
+
 		// gets reset each time the graph updates
 		streamSection.tweetCount += 1;
 
-
-		streamSection.streamContainer.insertAdjacentHTML("beforeend", "<p class='stream__tweet'>" + tweet + "</p>");
+		// insert latest tweet and remove oldest tweet
+		streamSection.streamContainer.insertAdjacentHTML("afterbegin", "<p class='stream__tweet'>" + tweet + "</p>");
 		streamTweets = streamSection.streamContainer.getElementsByClassName("stream__tweet");
 	    if (streamTweets.length > 10) {
-	        streamSection.streamContainer.removeChild(streamTweets[0].nextSibling);
-	        streamSection.streamContainer.removeChild(streamTweets[0]);
+	        streamSection.streamContainer.removeChild(streamTweets[streamTweets.length-1]);
 	    }
 
 	});

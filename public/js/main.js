@@ -1,10 +1,5 @@
 var socket = io();
-var graphs = document.getElementsByClassName("graph");
-var streamContainers = document.getElementsByClassName("stream__container");
 var graphUpdateTime = 1000;
-var d = new Date();
-var time = d.toTimeString();
-var graphUpdater;
 var paused = true;
 // html sections that contain both a stream and graph of tweets, as well as all of the required data
 var streamSections = [];
@@ -19,90 +14,23 @@ init();
 
 
 function init() {
-	unpause();
+	var graphs = document.getElementsByClassName("graph");
+	var streamContainers = document.getElementsByClassName("stream__container");
 
+	// for each canvas element, build a graph and begin streaming tweets
 	for (var i = 0; i < graphs.length; i++) {
-
 		graphs[i] = graphs[i].getContext('2d');
 
-		var data = {
-			labels: [time],
-			datasets: [{
-				data: [
-				{x: time, y: 1},
-				],
-				label: '# of Tweets',
-				backgroundColor: "rgb(29, 161, 242)",
-				borderColor: "rgb(29, 161, 242)",
-				borderWidth: 1,
-				fill: false,
-			}]
-		}
-
-		var options = {
-			responsive: true,
-			maintainAspectRatio: false,
-			title:{
-				display: false,
-			},
-			tooltips: {
-				mode: 'index',
-				intersect: false,
-			},
-			hover: {
-				mode: 'nearest',
-				intersect: true
-			},
-			scales: {
-				xAxes: [{
-					display: false,
-					scaleLabel: {
-						display: true,
-						labelString: 'Time'
-					}
-				}],
-				yAxes: [{
-					display: true,
-					scaleLabel: {
-						display: true,
-						labelString: 'Count'
-					}
-				}]
-			},
-			elements: {
-				line: {
-	                tension: 0, // disables bezier curves
-	            }
-	        },
-	        layout: {
-	        	padding: {
-	        		left: 0,
-	        		right: 10,
-	        		top: 0,
-	        		bottom: 0
-	        	}
-	        }
-	    }
-
-	    var myLineChart = new Chart(graphs[i], {
-	    	type: 'line',
-	    	data: data,
-	    	options: options
-	    });
-
-	    var streamObj = {
-	    	streamName: "tweets" + i,
-	    	graph: myLineChart,
-	    	tweetCount : 0,
-	    	streamContainer: streamContainers[i]
-	    }
-
+	    var streamObj = buildGraph(graphs[i], streamContainers[i], i);
 	    streamSections.push(streamObj);
-
-	    startStream(streamSections[i]);
+	    startStream(streamObj);
 	}
+
+	// connect to streaming socket and begin updating graphs 
 	socket.connect();
-	graphUpdater = setInterval(updateGraph, graphUpdateTime);
+	setInterval(updateGraphs, graphUpdateTime);
+
+	unpause();
 
 	// pause and unpause tweet stream upon click
 	$(".gradient").on("click", function() {
@@ -126,7 +54,86 @@ function pause() {
 	paused = true;
 }
 
-function updateGraph() {
+function buildGraph(graph, streamContainer, index) {
+	var d = new Date();
+	var time = d.toTimeString();
+
+	// setup default data and options
+	var data = {
+		labels: [time],
+		datasets: [{
+			data: [
+			{x: time, y: 1},
+			],
+			label: '# of Tweets',
+			backgroundColor: "rgb(29, 161, 242)",
+			borderColor: "rgb(29, 161, 242)",
+			borderWidth: 1,
+			fill: false,
+		}]
+	}
+	var options = {
+		responsive: true,
+		maintainAspectRatio: false,
+		title:{
+			display: false,
+		},
+		tooltips: {
+			mode: 'index',
+			intersect: false,
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+		scales: {
+			xAxes: [{
+				display: false,
+				scaleLabel: {
+					display: true,
+					labelString: 'Time'
+				}
+			}],
+			yAxes: [{
+				display: true,
+				scaleLabel: {
+					display: true,
+					labelString: 'Count'
+				}
+			}]
+		},
+		elements: {
+			line: {
+				tension: 0,
+			}
+		},
+		layout: {
+			padding: {
+				left: 0,
+				right: 10,
+				top: 0,
+				bottom: 0
+			}
+		}
+	}
+
+	var myLineChart = new Chart(graph, {
+		type: 'line',
+		data: data,
+		options: options
+	});
+
+	var streamObj = {
+		streamName: "tweets" + index,
+		graph: myLineChart,
+		tweetCount : 0,
+		streamContainer: streamContainer
+	}
+
+	return streamObj;
+}
+
+function updateGraphs() {
 	// only update graph if not paused
 	if (!paused)	{
 		for (var i = 0; i < streamSections.length; i++) {
@@ -139,18 +146,19 @@ function updateGraph() {
 }
 
 function refreshGraphData(streamSection) {
-	// grab current date, convert to string, and push to xPoint array
 	d = new Date();
 	time = d.toTimeString();
 
+	// if there are more than 7 points on the graph, remove oldest
 	if (streamSection.graph.data.labels.length > 7) {
 		streamSection.graph.data.labels.shift();
 		streamSection.graph.data.datasets[0].data.shift();
 	}
+	// push new data to graph
 	streamSection.graph.data.labels.push(time);
-
-	// push current tweet count to yPoint array
 	streamSection.graph.data.datasets[0].data.push({x: time, y: streamSection.tweetCount});
+
+	// update graph visual
 	streamSection.graph.update();
 }
 

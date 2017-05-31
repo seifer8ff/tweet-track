@@ -4,12 +4,12 @@ html	{
 
 body	{
 	height: 100%;
-	background-color: #cceaf3;
+	background-color: #F5F8FA;
 	padding-top: 60px;
 }
 
 .navbar-inverse {
-	background-color: #3cf;
+	background-color: #1DA1F2;
 	color: white;
 	border: none;
 	box-shadow: 0 2px 2px 0 #C2C2C2;
@@ -36,10 +36,11 @@ body	{
 
 .title	{
 	text-align: center;
+	text-transform: capitalize;
 }
 
 .title--highlight	{
-	background-color: #3cf;
+	background-color: #1DA1F2;
 	color: white;
 	line-height: 100%;
 	margin: 0;
@@ -48,6 +49,7 @@ body	{
 }
 
 .section {
+	position: relative;
 	background-color: white;
 	color: black;
 	margin: 15px 0 15px 0;
@@ -57,7 +59,7 @@ body	{
 }
 
 .section__rect {
-	height: 180px;
+	/*height: 180px;*/
 }
 
 .section__square {
@@ -72,7 +74,7 @@ body	{
 
 .stream__tweet 	{
 	padding: 5px 10px 2px 10px;
-	background-color: #c0deed;
+	background-color: #F5F8FA;
 }
 
 .gradient {
@@ -83,8 +85,17 @@ body	{
 	background: linear-gradient(to bottom, rgba(255,255,255,0) 75%, white 97%, white 100%);
 }
 
-#graph {
-	margin: 20px 0 20px 0;
+.section > .remove {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.remove > button.glyphicon {
+	color: #AAB8C2;
+	/*outline: none;*/
+	background-color: transparent;
+	border: none;
 }
 
 

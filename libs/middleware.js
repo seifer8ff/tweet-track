@@ -17,6 +17,7 @@ module.exports = function(io) {
 	// create array of streams from db to 'stream' view based on current user's keywords
 	middleware.buildDBStreams = function(req, res, next) {
 		// end and delete old streams before rebuilding streams
+		console.log("Trying to delete old streams. number of streams: " + middleware.streams.length);
 		for (var i = 0; i < middleware.streams.length; i++) {
 			middleware.streams[i].destroy();
 		}

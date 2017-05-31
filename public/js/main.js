@@ -32,8 +32,8 @@ function init() {
 				{x: time, y: 1},
 				],
 				label: '# of Tweets',
-				backgroundColor: "rgb(255, 99, 132)",
-				borderColor: "rgb(255, 99, 132)",
+				backgroundColor: "rgb(29, 161, 242)",
+				borderColor: "rgb(29, 161, 242)",
 				borderWidth: 1,
 				fill: false,
 			}]
@@ -41,6 +41,7 @@ function init() {
 
 		var options = {
 			responsive: true,
+			maintainAspectRatio: false,
 			title:{
 				display: false,
 			},
@@ -54,7 +55,7 @@ function init() {
 			},
 			scales: {
 				xAxes: [{
-					display: true,
+					display: false,
 					scaleLabel: {
 						display: true,
 						labelString: 'Time'
@@ -72,7 +73,15 @@ function init() {
 	            line: {
 	                tension: 0, // disables bezier curves
 	            }
-	        }
+	        },
+	        layout: {
+	            padding: {
+	                left: 0,
+	                right: 10,
+	                top: 0,
+	                bottom: 0
+	            }
+        }
 		}
 
 		var myLineChart = new Chart(graphs[i], {

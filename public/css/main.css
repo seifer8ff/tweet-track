@@ -28,24 +28,40 @@ body	{
     color: #eff4f7;
 }
 
-/*.col--noPad	{
-	padding-left: 0;
-	padding-right: 0;
-	margin-bottom: 15px;
-}*/
+.jumbotron {
+	background-color: #FFFFFF;
+}
+
+.btn-twitter {
+	opacity: 0;
+	padding: 0;
+	border: none;
+	-webkit-animation: fadeIn 1s ease forwards;
+	-moz-animation: fadeIn 1s ease forwards;
+	-o-animation: fadeIn 1s ease forwards;
+	animation: fadeIn 1s ease forwards;
+}
+
+@-webkit-keyframes fadeIn {
+	0%{opacity: 0}
+	100%{opacity: 1}
+}
+@-moz-keyframes fadeIn {
+	0%{opacity: 0}
+	100%{opacity: 1}
+}
+@-o-keyframes fadeIn {
+	0%{opacity: 0}
+	100%{opacity: 1}
+}
+@keyframes fadeIn { 
+	0%{opacity: 0}
+	100%{opacity: 1}
+}
 
 .title	{
 	text-align: center;
 	text-transform: capitalize;
-}
-
-.title--highlight	{
-	background-color: #1DA1F2;
-	color: white;
-	line-height: 100%;
-	margin: 0;
-	padding: 20px;
-	box-shadow: 0 2px 2px 0 #C2C2C2;
 }
 
 .section {
@@ -53,16 +69,17 @@ body	{
 	background-color: white;
 	color: black;
 	margin: 15px 0 15px 0;
-	padding: 10px;
 	border-radius: 12px 12px 12px 12px;
 	box-shadow: 0 2px 2px 0 #C2C2C2;
 }
 
 .section__rect {
-	/*height: 180px;*/
+	padding: 10px;
+	height: 60px;
 }
 
 .section__square {
+	padding: 10px;
 	height: 400px;
 }
 

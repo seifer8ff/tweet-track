@@ -164,7 +164,7 @@ function refreshGraphData(streamSection) {
 
 // takes one streamSection (containing both the stream and graph data), and begins streaming tweets from the socket
 function startStream(streamSection) {
-	console.log("starting stream");
+	console.log("starting stream: " + streamSection.streamName);
 	var streamTweets = streamSection.streamContainer.getElementsByClassName("stream__tweet");
 
 	socket.on(streamSection.streamName, function(tweet) {

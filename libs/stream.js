@@ -20,7 +20,7 @@ stream.twit = new twitter({
 
 // create the string used to query twitter based on all users' keywords
 stream.buildQueryString = function(callback) {
-	var newQueryString = "javascript,";
+	var newQueryString = "food,";
 
 	// create stream of all users in DB
 	var cursor = User.find().cursor();

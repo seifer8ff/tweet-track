@@ -1,28 +1,17 @@
 <% include partials/header %>
 
-
-
-
 <div class="container">
-	<!-- INFO BOXES -->
-	<div class="row">
-		<div class="col-xs-6">
-			<div class="section section__rect">
-				<form class="form-inline" action="/stream" method="POST">
-					<div class="form-group">
-						<label for"newKeyword" >New Hashtag: </label>
-						<input  type="text" class="form-control" id="newKeyword" name="newKeyword" placeholder="nintendo">
-					</div>
-					<button type="submit" class="btn btn-default">Add</button>
-				</form>
-			</div>
-		</div>
-		<div class="col-xs-6">
-			<div class="section section__rect">
-				<p>Most tracked hashtag: Trump</p>
-			</div>
+	<div class="jumbotron section">
+		<h1 class="text-center">Tweet Track</h1>
+		<p class="text-center">Track hashtags on Twitter to measure trends and see what people are saying about your interests.</p>
+		<hr>
+		<div class="text-center">
+			<a class="btn btn-default btn-twitter" href="/login/twitter">
+				<img src="/img/sign-in-with-twitter-gray.png"/>
+			</a>
 		</div>
 	</div>
+
 	<!-- STREAM + GRAPH -->
 	<% keywords.forEach(function(keyword, index) { %>
 		<div class="row">
@@ -50,9 +39,6 @@
 						<div class="loader__anim"></div>
 						<h3 class="text-center">Waiting for Tweets</h3>
 					</div>
-					<form action="/stream/<%= keyword %>?_method=DELETE" method="POST" class="remove">
-                    	<button class="glyphicon glyphicon-remove"></button>
-                    </form>
 				</div>
 			</div>
 		</div>

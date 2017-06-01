@@ -12,8 +12,8 @@ module.exports = function(io) {
 	
 
 	// INDEX ROUTE
-	router.get("/", function(req, res){
-		res.render("login");
+	router.get("/", utils.middleware.buildDemoStream, function(req, res){
+		res.render("splash", {keywords: ["food"]}); // keyword must match keyword in buildDemoStream function
 	});
 
 	// ROUTE TO RENDER TWEET STREAM
@@ -25,7 +25,7 @@ module.exports = function(io) {
 					res.redirect("/");
 				} else {
 					// pass in updated user to account for changes in user's keywords
-					res.render("stream", {updatedUser: user});
+					res.render("stream", {keywords: user.keywords});
 				}
 			});
 	});

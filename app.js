@@ -10,6 +10,10 @@ var configAuth 		= require("./config/auth"),
 	mongoose 		= require("mongoose"),
 	utils			= require("./libs")(io);
 
+if(!process.env.CONSUMER_KEY) {
+  var env = require('config/env.js');
+}
+
 // ROUTES
 var indexRoutes         = require("./routes/index")(io);
 
@@ -17,7 +21,7 @@ var indexRoutes         = require("./routes/index")(io);
 require("./config/passport")(passport);
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost/twitter-stream");
+mongoose.connect(process.env.MONGODB_URI);
 
 // use bodyparser
 app.use(bodyParser.urlencoded({extended: true}));

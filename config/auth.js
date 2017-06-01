@@ -1,5 +1,5 @@
 if(!process.env.CONSUMER_KEY) {
-  var env = require('./env.js')
+  var env = require('./env.js');
 }
 
 var auth = {};

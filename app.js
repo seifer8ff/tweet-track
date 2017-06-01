@@ -54,11 +54,10 @@ io.on('connect', function(socket) {
 });
 
 // socket.io server rather than expresss
-server.listen(process.env.PORT || 3000, function(){
+server.listen(process.env.PORT || 3000, function() {
 	console.log("socker server is listening on port 3000");
-	utils.stream.buildQueryString(function() {
-		utils.stream.buildTwitterStream(function() {
-			console.log("twitter streaming now");
-		});
+	utils.stream.buildTwitterStream(function() {
+		console.log("twitter streaming now");
+		setInterval(utils.stream.restartTwitterStream, 1800000);
 	});
 });

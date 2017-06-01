@@ -15,7 +15,7 @@ module.exports = function(io) {
 	}
 
 	middleware.buildDemoStream = function(req, res, next) {
-		var keyword = "food"; // keyword must match keyword in router index.js / route
+		var keyword = "me"; // keyword must match keyword in router index.js / route
 
 		// end and delete old streams before rebuilding streams
 		console.log("Trying to delete old streams. number of streams: " + middleware.streams.length);

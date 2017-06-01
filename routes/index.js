@@ -13,7 +13,7 @@ module.exports = function(io) {
 
 	// INDEX ROUTE
 	router.get("/", utils.middleware.buildDemoStream, function(req, res){
-		res.render("splash", {keywords: ["food"]}); // keyword must match keyword in buildDemoStream function
+		res.render("splash", {keywords: ["me"]}); // keyword must match keyword in buildDemoStream function
 	});
 
 	// ROUTE TO RENDER TWEET STREAM
@@ -41,8 +41,10 @@ module.exports = function(io) {
 				// only add to profile if not duplicate
 				if (user.keywords.indexOf(newKeyword) === -1) {
 					user.keywords.push(newKeyword);
-					user.save();
-					console.log(user);
+					user.save(function() {
+						console.log(user);
+						utils.stream.restartTwitterStream();
+					});
 				}
 				res.redirect("/stream");
 			}

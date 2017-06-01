@@ -105,7 +105,7 @@ stream.restartTwitterStream = function(callback) {
 	var time = Date.now();
 	console.log("time= " + time);
 	console.log("time last built= " + stream.lastBuilt);
-	console.log("diff= " + (time - stream.lastBuilt);
+	console.log("diff= " + (time - stream.lastBuilt));
 
 	if (time - stream.lastBuilt >= 1800000) {
 		console.log("passed time check");

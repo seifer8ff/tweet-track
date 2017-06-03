@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema({
 		displayName: 	String,
 		userName: 		String
 	},
-	keywords: [String]
+	keywords: {type: [String], default: ["me"]}
 });
 
 module.exports = mongoose.model("user", userSchema);

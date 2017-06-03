@@ -78,6 +78,7 @@ module.exports = function(io) {
 
 		return next();
 	}
+	
 
 	return middleware;
 }

@@ -36,7 +36,7 @@ module.exports = function(io) {
 		console.log("streaming: demo tweets");
 
 		middleware.streams[0].on("error", function(err) {
-			throw error;
+			console.log(err);
 		});
 
 		return next();
@@ -70,7 +70,7 @@ module.exports = function(io) {
 					console.log("streaming: tweets" + index);
 
 					middleware.streams[index].on("error", function(err) {
-						throw error;
+						console.log(err);
 					});
 				});
 			}
@@ -78,7 +78,7 @@ module.exports = function(io) {
 
 		return next();
 	}
-	
+
 
 	return middleware;
 }

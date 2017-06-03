@@ -79,7 +79,8 @@ stream.buildTwitterStream = function(callback) {
 		});
 
 		stream.tweetStream.on('error', function(error) {
-			throw error;
+			// if an error is returned here, it's most likely a status code of 420 (too many attempts);
+			console.log(error);
 		});
 
 		if (callback && typeof callback === "function") {

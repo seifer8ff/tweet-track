@@ -30,12 +30,19 @@ body	{
 	width: auto;
 }
 
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
+	background-color: #657786;
+}
+
 .navbar-inverse .navbar-nav>li>a {
     color: #eff4f7;
 }
 
-.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
-	background-color: #657786;
+#img-profile {
+	height: 40px;
+	margin-right: 10px;
+	margin-top: -20px;
+	margin-bottom: -15px;
 }
 
 .jumbotron {
@@ -220,3 +227,19 @@ body	{
 	0%{opacity: 0.5}
 	100%{opacity: 1}
 }
+
+
+
+
+/*================
+  MEDIA QUERIES
+ ===============*/
+
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 767px) {
+	.navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
+	    color: #eff4f7;
+	}
+}
+
+

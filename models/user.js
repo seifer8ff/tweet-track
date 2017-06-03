@@ -3,6 +3,7 @@ var mongoose = require("mongoose");
 var userSchema = new mongoose.Schema({
 	twitter: {
 		id: 			String,
+		profileImage: 	String,
 		token: 			String,
 		displayName: 	String,
 		userName: 		String

@@ -12,35 +12,45 @@
 </head>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
-	  <div class="container-fluid">
-	    <!-- Brand and toggle get grouped for better mobile display -->
-	    <div class="navbar-header">
-	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
-			<a class="navbar-brand" href="/">
-				<span>
-					<img alt="Tweet Track Image" src="/img/twitter-white-on-blue.png">
-				</span>
-				<span>Tweet Track</span>
-			</a>
-	    </div>
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<!-- only show collapsed navbar if user is logged in  -->
+				<% if(currentUser) { %>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-main" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				<% } %>
+				<a class="navbar-brand" href="/">
+					<span>
+						<img alt="Tweet Track Image" src="/img/twitter-white-on-blue.png">
+					</span>
+					<span>Tweet Track</span>
+				</a>
+			</div>
 
-	    <!-- Collect the nav links, forms, and other content for toggling -->
-	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	      <ul class="nav navbar-nav navbar-right">
-	      	<% if(currentUser) { %>
-            	<li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=currentUser.twitter.displayName%><span class="caret"></span></a>
-		          <ul class="dropdown-menu">
-		            <li><a href="/logout">Logout</a></li>
-		          </ul>
-		        </li>
-            <% } %>
-	      </ul>
-	    </div><!-- /.navbar-collapse -->
-	  </div><!-- /.container-fluid -->
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<!-- only show collapsed navbar if user is logged in  -->
+			<% if(currentUser) { %>
+				<div class="collapse navbar-collapse" id="navbar-collapse-main">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<% if (currentUser.twitter.profileImage) { %>
+									<img class="img-circle" id="img-profile" src="<%=currentUser.twitter.profileImage%>">
+								<% } %>
+								<%=currentUser.twitter.displayName%>
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="/logout">Logout</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			<% } %>
+		</div><!-- /.container-fluid -->
 	</nav>

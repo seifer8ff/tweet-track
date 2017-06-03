@@ -12,8 +12,12 @@ module.exports = function(io) {
 	
 
 	// INDEX ROUTE
-	router.get("/", utils.middleware.buildDemoStream, function(req, res){
-		res.render("splash", {keywords: ["me"]}); // keyword must match keyword in buildDemoStream function
+	router.get("/", utils.middleware.buildDemoStream, function(req, res) {
+		if (req.isAuthenticated()) {
+			res.redirect("/stream");
+		} else {
+			res.render("splash", {keywords: ["me"]}); // keyword must match keyword in buildDemoStream function
+		}
 	});
 
 	// ROUTE TO RENDER TWEET STREAM

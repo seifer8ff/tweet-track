@@ -29,6 +29,9 @@
 			<div class="col-sm-6">
 				<div class="section section__square stream">
 					<span class="gradient"></span>
+					<form action="/stream/<%= keyword %>?_method=DELETE" method="POST" class="remove">
+						<button class="glyphicon glyphicon-remove"></button>
+					</form>
 					<h4 class="title">#<%= keyword %> Tweets </h4>
 					<div class="stream__container">
 						<p class="stream__tweet placeholder">&nbsp;</p>
@@ -45,14 +48,14 @@
 			</div>
 			<div class="col-sm-6">
 				<div class="section section__square">
+					<form action="/stream/<%= keyword %>?_method=DELETE" method="POST" class="remove">
+                    	<button class="glyphicon glyphicon-remove"></button>
+                    </form>
 					<canvas class="graph hidden"></canvas>
 					<div class="loader placeholder">
 						<div class="loader__anim"></div>
 						<h3 class="text-center">Waiting for Tweets</h3>
 					</div>
-					<form action="/stream/<%= keyword %>?_method=DELETE" method="POST" class="remove">
-                    	<button class="glyphicon glyphicon-remove"></button>
-                    </form>
 				</div>
 			</div>
 		</div>

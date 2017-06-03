@@ -33,13 +33,13 @@ function init() {
 	unpause();
 
 	// pause and unpause tweet stream upon click
-	$(".gradient").on("click", function() {
-		if (paused)	{
-			unpause();
-		} else	{
-			pause();
-		}
-	});
+	// $(".gradient").on("click", function() {
+	// 	if (paused)	{
+	// 		unpause();
+	// 	} else	{
+	// 		pause();
+	// 	}
+	// });
 }
 
 
@@ -100,7 +100,11 @@ function buildGraph(graph, streamContainer, index) {
 				scaleLabel: {
 					display: true,
 					labelString: 'Count'
-				}
+				},
+				ticks: {
+					beginAtZero: true,
+					suggestedMax: 10
+                }
 			}]
 		},
 		elements: {

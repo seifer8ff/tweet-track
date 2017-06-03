@@ -63,24 +63,25 @@ function buildGraph(graph, streamContainer, index) {
 		labels: [time],
 		datasets: [{
 			data: [
-			{x: time, y: 1},
+			{x: time, y: 1}
 			],
 			label: '# of Tweets',
-			backgroundColor: "rgb(29, 161, 242)",
+			backgroundColor: "rgba(29, 161, 242, 0.2)",
+			pointBackgroundColor: "rgb(29, 161, 242)",
 			borderColor: "rgb(29, 161, 242)",
 			borderWidth: 1,
-			fill: false,
+			fill: true
 		}]
 	}
 	var options = {
 		responsive: true,
 		maintainAspectRatio: false,
 		title:{
-			display: false,
+			display: false
 		},
 		tooltips: {
 			mode: 'index',
-			intersect: false,
+			intersect: false
 		},
 		hover: {
 			mode: 'nearest',
@@ -104,7 +105,7 @@ function buildGraph(graph, streamContainer, index) {
 		},
 		elements: {
 			line: {
-				tension: 0,
+				tension: 0
 			}
 		},
 		layout: {

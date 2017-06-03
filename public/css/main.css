@@ -22,10 +22,20 @@ body	{
 
 .navbar-brand {
 	font-size: 1.35em;
+	padding: 0;
+}
+
+.navbar-brand img {
+	height: 100%;
+	width: auto;
 }
 
 .navbar-inverse .navbar-nav>li>a {
     color: #eff4f7;
+}
+
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
+	background-color: #657786;
 }
 
 .jumbotron {

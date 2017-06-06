@@ -63,10 +63,10 @@ module.exports = function(io) {
 	router.delete("/stream/:keyword", utils.middleware.isLoggedIn, function(req, res) {
 		User.findOneAndUpdate({_id: req.user._id}, {$pull: {keywords: req.params.keyword}}, function(err, user) {
 			if (err) {
+				console.log("error deleting keyword: " + req.params.keyword);
 				console.log(err);
-			} else {
-				res.redirect("/stream");
 			}
+			res.redirect("/stream");
 		});
 	});
 

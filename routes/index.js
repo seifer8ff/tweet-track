@@ -40,16 +40,20 @@ module.exports = function(io) {
 			if (err) {
 				res.redirect("/stream");
 			} else {
-				// sanitize string
-				var newKeyword = req.body.newKeyword.toLowerCase();
-				// only add to profile if not duplicate
-				if (user.keywords.indexOf(newKeyword) === -1) {
-					user.keywords.push(newKeyword);
-					user.save(function() {
-						console.log(user);
-						utils.stream.restartTwitterStream();
-					});
+				// validate input
+				var newKeyword = utils.validateInput(req.body.newKeyword);
+
+				if (newKeyword) {
+					// only add to profile if not empty and not duplicate
+					if (user.keywords.indexOf(newKeyword) === -1) {
+						user.keywords.push(newKeyword);
+						user.save(function() {
+							console.log(user);
+							utils.stream.restartTwitterStream();
+						});
+					}
 				}
+				// redirect to stream whether the keyword is valid or not. Need to add error message if it's not
 				res.redirect("/stream");
 			}
 		});

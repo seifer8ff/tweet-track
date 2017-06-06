@@ -8,7 +8,40 @@ var streamSections = [];
 
 
 // runs on load
-init();
+$(document).ready(function () {
+
+	// initialize graphs
+	init();
+
+
+	// form validation
+    $("#newKeyword-form").on("submit", function (e) {
+    	e.preventDefault();
+        var newKeyword = document.getElementById("newKeyword").value;
+
+		newKeyword = validateInput(newKeyword);
+
+		if (newKeyword) {
+			console.log("input validation successful: " + newKeyword);
+			this.submit();
+		} else {
+			console.log("input validation failed");
+			return;
+		}
+    });
+
+
+    // click handlers
+    // pause and unpause tweet stream upon click
+	// $(".gradient").on("click", function() {
+	// 	if (paused)	{
+	// 		unpause();
+	// 	} else	{
+	// 		pause();
+	// 	}
+	// });
+});
+
 
 
 
@@ -31,15 +64,6 @@ function init() {
 	setInterval(updateGraphs, graphUpdateTime);
 
 	unpause();
-
-	// pause and unpause tweet stream upon click
-	// $(".gradient").on("click", function() {
-	// 	if (paused)	{
-	// 		unpause();
-	// 	} else	{
-	// 		pause();
-	// 	}
-	// });
 }
 
 
@@ -192,6 +216,23 @@ function startStream(streamSection) {
 	    }
 
 	});
+}
+
+ function validateInput(input) {
+	if (!input) {
+		return false;
+	}
+
+	// sanitize string (removes accents, spaces, special characters)
+	var cleanInput = input.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+	cleanInput = cleanInput.replace(/[^\w]/gi, '')
+	cleanInput = cleanInput.toLowerCase();
+
+	if (cleanInput === "") {
+		return false;
+	}
+
+	return cleanInput;
 }
 
 

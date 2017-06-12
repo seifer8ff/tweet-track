@@ -11,27 +11,15 @@ var cssnano = require('gulp-cssnano');
 var imagemin = require('gulp-imagemin');
 var imageminJpegRecompress = require('imagemin-jpeg-recompress');
 var imageminPngquant = require('imagemin-pngquant');
-var fs = require('fs');
 
 
-
-// heroku won't work with a folder with a period
-gulp.task('chartjs-rename', function(done) {
-  fs.rename('client/vendor/chart.js', 'client/vendor/chartjs', function (err) {
-    if (err) {
-      throw err;
-    }
-    done();
-  });
-});
 
 // Concatenate & Minify JS & CSS
-gulp.task('minify', ['chartjs-rename'], function(){
+gulp.task('minify', function(){
   return gulp.src([
     'client/vendor/bootstrap/dist/css/bootstrap.min.css',
     'client/vendor/jquery/dist/jquery.min.js',
     'client/vendor/bootstrap/dist/js/bootstrap.min.js',
-    'client/vendor/chartjs/dist/chart.bundle.js',
     'client/css/*.css',
     'client/js/*.js'
   ])

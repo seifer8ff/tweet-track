@@ -49,7 +49,7 @@ module.exports = function(io) {
 						user.keywords.push(newKeyword);
 						user.save(function() {
 							console.log(user);
-							utils.stream.restartTwitterStream();
+							utils.stream.checkForNewKeywords();
 						});
 					}
 				}

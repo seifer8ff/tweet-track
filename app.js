@@ -60,6 +60,6 @@ server.listen(process.env.PORT || 3000, function() {
 	console.log("socker server is listening on port 3000");
 	utils.stream.buildTwitterStream(function() {
 		console.log("twitter streaming now");
-		setInterval(utils.stream.restartTwitterStream, 1800000);
+		setInterval(utils.stream.checkForNewKeywords, 1800000);
 	});
 });

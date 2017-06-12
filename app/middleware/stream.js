@@ -8,6 +8,8 @@ var stream = {};
 stream.queryString = "";
 stream.tweetStream = undefined;
 stream.lastBuilt = 0;
+stream.timeout = 60000;
+stream.timer;
 
 stream.twit = new twitter({
 	// api keys are defined in a config file- excluded from github for privacy
@@ -78,16 +80,24 @@ stream.buildTwitterStream = function(callback) {
 			}
 		});
 
+		// if error, end the stream + start attempting to reconnect. Each failed reconnect attempt doubles the wait time
 		stream.tweetStream.on('error', function(error) {
-			// if an error is returned here, it's most likely a status code of 420 (too many attempts);
 			console.log(error);
+	        stream.destroyTwitterStream(function() {
+	        	stream.reconnectTwitterStream(function() {
+	        		stream.timeout *= 2;
+	        	});
+	        });
 		});
+
+		// save last build time for rebuilding stream purposes
+		var time = Date.now();
+		stream.lastBuilt = time;
 
 		if (callback && typeof callback === "function") {
 			callback();
 		};
 	});
-	
 }
 
 stream.destroyTwitterStream = function(callback) {
@@ -102,29 +112,44 @@ stream.destroyTwitterStream = function(callback) {
 	};
 }
 
-stream.restartTwitterStream = function(callback) {
+stream.checkForNewKeywords = function() {
+	console.log("checking for new keywords from users")
 	var time = Date.now();
 	console.log("time= " + time);
 	console.log("time last built= " + stream.lastBuilt);
-	console.log("diff= " + (time - stream.lastBuilt));
+	console.log("time diff= " + (time - stream.lastBuilt));
 
 	if (time - stream.lastBuilt >= 1800000) {
-		console.log("passed time check");
+		stream.timeout = 1;
 		var currentQueryString = stream.queryString;
 
 		stream.buildQueryString(function() {
 			// if new keywords have been added, destroy the stream and rebuild it
 			if (currentQueryString !== stream.queryString) {
-				stream.destroyTwitterStream(function() {
-					stream.buildTwitterStream(function() {
-						console.log("restarted twitter stream");
-						// update the last built time for the next time this runs
-						stream.lastBuilt = time;
-					});
-				});
+				restartTwitterStream();
 			}
 		});
 	}
+}
+
+stream.restartTwitterStream = function() {
+	stream.destroyTwitterStream(function() {
+		stream.buildTwitterStream(function() {
+			console.log("restarted twitter stream");
+		});
+	});
+}
+
+stream.reconnectTwitterStream = function(callback) {
+	console.log("setting timer to reconnect twitter stream in: " + stream.timeout/1000);
+	stream.timer = setTimeout(function() {
+		clearTimeout(stream.timer);
+		stream.restartTwitterStream();
+	}, stream.timeout);
+
+	if (callback && typeof callback === "function") {
+		callback();
+	};
 }
 
 module.exports = stream;

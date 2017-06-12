@@ -1,4 +1,4 @@
-var configAuth 		= require("./config/auth"),
+var auth 			= require("./app/auth/auth"),
 	express 		= require("express"),
 	app 			= express(),
 	server 			= require("http").createServer(app),
@@ -8,17 +8,17 @@ var configAuth 		= require("./config/auth"),
 	bodyParser 		= require("body-parser"),
 	methodOverride	= require("method-override"),
 	mongoose 		= require("mongoose"),
-	utils			= require("./libs")(io);
+	utils			= require("./app/middleware")(io);
 
 if(!process.env.CONSUMER_KEY) {
-  var env = require('config/env.js');
+  var env = require('./config/env.js');
 }
 
 // ROUTES
-var indexRoutes         = require("./routes/index")(io);
+var indexRoutes         = require("./app/routes/index")(io);
 
 // initialize and configure passport
-require("./config/passport")(passport);
+require("./app/auth/passport")(passport);
 
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI);
@@ -30,6 +30,8 @@ app.use(express.static(__dirname + "/public"));
 // method override for PUT and DELETE routes
 app.use(methodOverride("_method"));
 // default to ejs templating
+app.set('views', __dirname + '/app/views');
+// app.set('views', path.join(__dirname, '/app/views'));
 app.set("view engine", "ejs");
 app.use(session({
     secret: "Lets see what people choose to track",

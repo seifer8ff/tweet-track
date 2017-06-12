@@ -1,4 +1,4 @@
-var configAuth 	= require("../config/auth"),
+var auth 		= require("../auth/auth"),
 	User 		= require("../models/user"),
 	Tweet 		= require("../models/tweet"),
 	twitter 	= require('twitter');
@@ -11,10 +11,10 @@ stream.lastBuilt = 0;
 
 stream.twit = new twitter({
 	// api keys are defined in a config file- excluded from github for privacy
-    consumer_key: configAuth.twitter.consumerKey,
-    consumer_secret: configAuth.twitter.consumerSecret,
-    access_token_key: configAuth.twitter.accessTokenKey,
-    access_token_secret: configAuth.twitter.accessTokenSecret
+    consumer_key: auth.twitter.consumerKey,
+    consumer_secret: auth.twitter.consumerSecret,
+    access_token_key: auth.twitter.accessTokenKey,
+    access_token_secret: auth.twitter.accessTokenSecret
 });
 
 

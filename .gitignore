@@ -4,3 +4,4 @@ env.js
 
 # UNTRACKED DIRECTORIES
 node_modules/
+client/vendor/

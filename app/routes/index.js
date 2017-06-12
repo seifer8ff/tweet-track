@@ -5,10 +5,10 @@ var express     = require("express"),
 
 module.exports = function(io) {
 
-	var utils 	= require("../libs")(io);
+	var utils 	= require("../middleware")(io);
 
 	// initialize and configure passport
-	require("../config/passport")(passport);
+	require("../auth/passport")(passport);
 	
 
 	// INDEX ROUTE

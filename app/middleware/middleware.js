@@ -1,4 +1,4 @@
-var configAuth 	= require("../config/auth"),
+var auth 		= require("../auth/auth"),
 	User 		= require("../models/user"),
 	Tweet 		= require("../models/tweet");
 

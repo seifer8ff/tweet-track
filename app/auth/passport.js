@@ -1,6 +1,6 @@
 var passport      = require("passport"),
     TwitterStrat  = require("passport-twitter").Strategy,
-    configAuth    = require("./auth"),
+    auth          = require("./auth"),
     User          = require("../models/user");
 
 
@@ -29,9 +29,9 @@ module.exports = function() {
 //=====================
 
   passport.use("twitter", new TwitterStrat({
-    consumerKey     : configAuth.twitter.consumerKey,
-    consumerSecret  : configAuth.twitter.consumerSecret,
-    callbackURL     : configAuth.twitter.callbackURL
+    consumerKey     : auth.twitter.consumerKey,
+    consumerSecret  : auth.twitter.consumerSecret,
+    callbackURL     : auth.twitter.callbackURL
   },
     function(token, tokenSecret, profile, done) {
     // make the code asynchronous

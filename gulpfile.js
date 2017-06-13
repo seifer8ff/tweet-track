@@ -34,6 +34,23 @@ gulp.task('minify', function(){
 .pipe(gulpIf('*.css', gulp.dest('public/css')))
 });
 
+// Concatenate JS & CSS FOR DEV
+gulp.task('minify-dev', function(){
+  return gulp.src([
+    'client/vendor/bootstrap/dist/css/bootstrap.min.css',
+    'client/vendor/jquery/dist/jquery.min.js',
+    'client/vendor/bootstrap/dist/js/bootstrap.min.js',
+    'client/css/*.css',
+    'client/js/*.js'
+  ])
+//  concatenates all js files
+.pipe(gulpIf('*.js', concat('main.min.js')))
+.pipe(gulpIf('*.js', gulp.dest('public/js')))
+// concatenates all CSS files
+.pipe(gulpIf('*.css', concat('styles.min.css')))
+.pipe(gulpIf('*.css', gulp.dest('public/css')))
+});
+
 // optimize images
 gulp.task('images', function(){
   return gulp.src('client/img/**/*.+(png|jpg|gif|svg|pdf)')
@@ -63,6 +80,14 @@ gulp.task('extras', function() {
 // build task
 gulp.task('build', function() {
   gulp.run('minify'); 
+  gulp.run('fonts'); 
+  gulp.run('extras'); 
+  gulp.run('images'); 
+});
+
+// build task for dev (doesn't strip debug or uglify)
+gulp.task('build-dev', function() {
+  gulp.run('minify-dev'); 
   gulp.run('fonts'); 
   gulp.run('extras'); 
   gulp.run('images'); 

@@ -1,7 +1,8 @@
 var auth 		= require("../auth/auth"),
 	User 		= require("../models/user"),
 	Tweet 		= require("../models/tweet"),
-	twitter 	= require('twitter');
+	twitter 	= require('twitter'),
+	Autolinker 	= require( 'autolinker' );
 
 var stream = {};
 
@@ -11,6 +12,7 @@ stream.lastBuilt = 0;
 stream.timeout = 60000;
 stream.timer;
 stream.pings = 0;
+stream.autolinker = new Autolinker( { newWindow: true, mention: "twitter", hashtag: "twitter", className: "tweet-link" } );
 
 stream.twit = new twitter({
 	// api keys are defined in a config file- excluded from github for privacy
@@ -68,10 +70,17 @@ stream.buildTwitterStream = function(callback) {
 					time: tweet.created_at,
 					hashtags: []
 				}
+				// if tweet is a retweet, save the original tweet instead of the truncated text
+				if (tweet.retweeted_status && tweet.retweeted_status.text) {
+					newTweet.body = tweet.retweeted_status.text;
+				}
 				// if tweet has hashtags, save those as well
 				if (tweet.entities && tweet.entities.hashtags.length > 0) {
 					newTweet.hashtags = tweet.entities.hashtags.map(function(hashtag) { return hashtag["text"]});
 				}
+				// convert links to hrefs inside of tweet body
+				newTweet.body = stream.autolinker.link(newTweet.body);
+
 				// add tweet to database
 				Tweet.create(newTweet, function(err, newTweet) {
 					if (err) {

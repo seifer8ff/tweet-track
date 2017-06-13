@@ -10,6 +10,7 @@ stream.tweetStream = undefined;
 stream.lastBuilt = 0;
 stream.timeout = 60000;
 stream.timer;
+stream.pings = 0;
 
 stream.twit = new twitter({
 	// api keys are defined in a config file- excluded from github for privacy
@@ -98,6 +99,12 @@ stream.buildTwitterStream = function(callback) {
 	        		stream.timeout *= 2;
 	        	});
 	        });
+		});
+
+		// ping is emitted when no data is received to measure when the stream should be reconnected
+		stream.tweetStream.on('ping', function() {
+			stream.pings += 1;
+			console.log("pings= " + stream.pings);
 		});
 
 		// save last build time for rebuilding stream purposes

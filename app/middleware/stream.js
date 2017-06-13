@@ -126,7 +126,7 @@ stream.checkForNewKeywords = function() {
 		stream.buildQueryString(function() {
 			// if new keywords have been added, destroy the stream and rebuild it
 			if (currentQueryString !== stream.queryString) {
-				restartTwitterStream();
+				stream.restartTwitterStream();
 			}
 		});
 	}

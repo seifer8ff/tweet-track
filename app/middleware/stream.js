@@ -90,6 +90,16 @@ stream.buildTwitterStream = function(callback) {
 	        });
 		});
 
+		// if stream ended, start attempting to reconnect
+		stream.tweetStream.on('end', function(res) {
+			console.log(res);
+	        stream.destroyTwitterStream(function() {
+	        	stream.reconnectTwitterStream(function() {
+	        		stream.timeout *= 2;
+	        	});
+	        });
+		});
+
 		// save last build time for rebuilding stream purposes
 		var time = Date.now();
 		stream.lastBuilt = time;

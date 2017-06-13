@@ -4,6 +4,7 @@ var auth 			= require("./app/auth/auth"),
 	server 			= require("http").createServer(app),
 	io 				= require("socket.io")(server),
 	session			= require("express-session"),
+	mongoStore		= require("connect-mongo")(session),
 	passport		= require("passport"),
 	bodyParser 		= require("body-parser"),
 	methodOverride	= require("method-override"),
@@ -35,8 +36,9 @@ app.set('views', __dirname + '/app/views');
 app.set("view engine", "ejs");
 app.use(session({
     secret: "Lets see what people choose to track",
-    resave: true,
-    saveUninitialized: true
+    store: new mongoStore({ mongooseConnection: mongoose.connection }),
+    resave: false,
+    saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());

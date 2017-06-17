@@ -8,7 +8,7 @@
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="section section__rect">
-				<label for"newKeyword" >New Hashtag: </label>
+				<label for="newKeyword" >New Hashtag: </label>
 				<form class="input-group" id="newKeyword-form" action="/stream" method="POST">
 					<input  type="text" class="form-control" id="newKeyword" name="newKeyword" placeholder="Nintendo">
 					<span class="input-group-btn">
@@ -22,7 +22,7 @@
 	<% keywords.forEach(function(keyword, index) { %>
 		<div class="row">
 			<div class="col-sm-6">
-				<div class="section section__square stream">
+				<section class="section section__square stream">
 					<span class="gradient"></span>
 					<form action="/stream/<%= keyword %>?_method=DELETE" method="POST" class="remove">
 						<button class="glyphicon glyphicon-remove"></button>
@@ -39,10 +39,10 @@
 						<p class="stream__tweet placeholder">&nbsp;</p>
 						<p class="stream__tweet placeholder">&nbsp;</p>
 					</div>
-				</div>
+				</section>
 			</div>
 			<div class="col-sm-6">
-				<div class="section section__square">
+				<section class="section section__square">
 					<form action="/stream/<%= keyword %>?_method=DELETE" method="POST" class="remove">
                     	<button class="glyphicon glyphicon-remove"></button>
                     </form>
@@ -51,7 +51,7 @@
 						<div class="loader__anim"></div>
 						<h3 class="text-center">Waiting for Tweets</h3>
 					</div>
-				</div>
+				</section>
 			</div>
 		</div>
 	<% }) %>
